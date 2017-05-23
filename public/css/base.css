@@ -6,6 +6,8 @@ a {
 }
 body {
   background: #eee;
+  line-height: 1.5;
+  font-size: 13px;
 }
 h1 {
   font-size: 18px;
@@ -22,11 +24,27 @@ input,
 button {
   padding: 5px;
 }
+button.primary {
+  background: #a10;
+  color: #fff;
+}
+button[disabled] {
+  background: #eee;
+  color: #aaa;
+}
 .fl {
   float: left;
 }
 .fr {
   float: right;
+}
+.hr {
+  display: block;
+  width: 98%;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 10px 1%;
+  float: left;
 }
 .clearfix:after,
 .clearfix:before {
@@ -35,18 +53,32 @@ button {
   display: table;
 }
 .container {
-  width: 600px;
+  max-width: 600px;
   margin: 0 auto;
 }
 .container.signup,
 .container.login,
+.container.question-add,
 .container.reset-password {
-  width: 400px;
+  max-width: 400px;
   margin-top: 15px;
+}
+.container.home {
+  max-width: 500px;
 }
 .navbar {
   background: #a10;
   color: #fff;
+}
+.navbar #quick-ask {
+  display: inline-block;
+}
+.navbar #quick-ask button {
+  background: #a10;
+  color: #fff;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 .navbar a {
   color: #fff;
@@ -94,7 +126,8 @@ label {
   color: #a10;
   margin: 4px 0;
 }
-input {
+input,
+textarea {
   display: block;
   width: 100%;
   padding: 5px;
@@ -103,4 +136,97 @@ input {
   -moz-border-radius: 3px;
   border-radius: 3px;
   outline: none;
+}
+.home {
+  margin-top: 20px;
+}
+.home h1 {
+  font-size: 16px;
+  color: #666;
+}
+.home .feed .vote {
+  float: left;
+  width: 10%;
+  padding-right: 5px;
+}
+.home .feed .vote > * {
+  background: rgba(200, 0, 0, 0.1);
+  text-align: center;
+  vertical-align: middle;
+  border-radius: 3px;
+  margin-bottom: 2px;
+  padding: 2px;
+  cursor: pointer;
+}
+.home .feed .vote .up {
+  color: #6f0b00;
+}
+.home .feed .vote .up:hover {
+  background: #a10;
+  color: #fff;
+}
+.home .feed .vote .down {
+  background: rgba(0, 0, 0, 0.1);
+  color: #555;
+}
+.home .feed .vote .down:hover {
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+}
+.home .feed-item-content {
+  width: 90%;
+  float: left;
+}
+.home .feed-item-content .content-act {
+  font-size: 12px;
+  color: #666;
+}
+.home .feed-item-content .content-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #222;
+}
+.home .feed-item-content .content-owner {
+  font-size: 13px;
+  color: #222;
+}
+.home .feed-item-content .content-owner .desc {
+  font-size: 12px;
+  color: #666;
+}
+.home .feed-item-content .action-set {
+  font-size: 12px;
+  color: #777;
+}
+.home .feed-item-content .comment-block {
+  display: none;
+}
+.home .feed-item-content .comment-block .comment-item-set {
+  border: 1px solid #eee;
+  padding: 0 10px;
+}
+.home .feed-item-content .comment-block .comment-item-set .rect {
+  position: relative;
+  bottom: 17px;
+  right: 2px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid rgba(0, 0, 0, 0.08);
+}
+.home .feed-item-content .comment-block .comment-item-set .comment-item {
+  padding-bottom: 10px;
+}
+.home .feed-item-content .comment-block .comment-item-set .comment-item .user {
+  float: left;
+  width: 10%;
+  font-weight: 500;
+}
+.home .feed-item-content .comment-block .comment-item-set .comment-item .comment-content {
+  float: right;
+  width: 90%;
+}
+.center {
+  text-align: center;
 }

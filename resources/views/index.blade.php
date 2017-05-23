@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" ng-app="knowledge">
+<html lang="en" ng-app="knowledge" user-id="{{session('id')}}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -12,61 +12,39 @@
     <script src="{{URL::asset('node_modules/angular/angular.js')}}"></script>
     <script src="{{URL::asset('node_modules/angular-ui-router/release/angular-ui-router.js')}}"></script>
     <script src="{{URL::asset('js/base.js')}}"></script>
+    <script src="{{URL::asset('js/common.js')}}"></script>
+    <script src="{{URL::asset('js/question.js')}}"></script>
+    <script src="{{URL::asset('js/user.js')}}"></script>
+    <script src="{{URL::asset('js/answer.js')}}"></script>
 </head>
 <body>
 <div class="navbar clearfix">
     <div class="container">
         <div class="fl">
             <div class="navbar-item brand">Knowledge</div>
-            <div class="navbar-item">
-                <input type="text" placeholder="search">
-            </div>
+            <form id="quick-ask" ng-controller="QuestionAddController" ng-submit="Question.go_add_question()">
+                <div class="navbar-item">
+                    <input type="text" ng-model="Question.new_question.title" placeholder="Type the question title">
+                </div>
+                <div class="navbar-item">
+                    <button type="submit">Ask</button>
+                </div>
+            </form>
         </div>
         <div class="fr">
             <a ui-sref="home" class="navbar-item">Home</a>
-            <a ui-sref="login" class="navbar-item">Login</a>
-            <a ui-sref="signup" class="navbar-item">Signup</a>
+            @if(is_logged_in())
+                <a ui-sref="login" class="navbar-item">{{session('username')}}</a>
+                <a href="{{url('api/user/logout')}}">Logout</a>
+            @else
+                <a ui-sref="login" class="navbar-item">Login</a>
+                <a ui-sref="signup" class="navbar-item">Signup</a>
+            @endif
         </div>
     </div>
 </div>
 <div class="page">
     <div ui-view></div>
 </div>
-<script type="text/ng-template" id="home.tpl">
-    <div class="home container">
-        Home
-    </div>
-</script>
-<script type="text/ng-template" id="signup.tpl">
-    <div ng-controller="SignupController" class="signup container">
-        <div class="card">
-            <h1>Sign up</h1>
-            <form name="signup_form" ng-submit="User.signUp()">
-                <div class="input-group">
-                    <label for="username">Username</label>
-                    <input name="username" type="text" ng-model="User.signup_data.username" ng-model-options="{updateOn:'blur'}" ng-minlength="4"
-                           ng-maxlength="24" required>
-                    <div class="input-error">
-                        <div ng-if="signup_form.username.$error.required">Username required</div>
-                    </div>
-                    <div>
-                        <label for="password">Password</label>
-                        <input name="password" type="text" ng-model="User.signup_data.password" ng-minlength="6"
-                               ng-maxlength="255" required>
-                    </div>
-                    <div class="input-error">
-                        <div ng-if="signup_form.password.$error.required">Password required</div>
-                    </div>
-                </div>
-                <button type="submit" ng-disabled="signup_form.$invalid">Sign Up</button>
-            </form>
-        </div>
-    </div>
-</script>
-<script type="text/ng-template" id="login.tpl">
-    <div class="home container">
-        Login
-    </div>
-</script>
 </body>
 </html>

@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Request;
 use Hash;
+use Blade;
 
 class User extends Model
 {
@@ -70,7 +71,7 @@ class User extends Model
         /*检查用户是否存在*/
         $user = $this->where('username',$username)->first();
         if(!$user){
-            return error('uer not exist');
+            return error('user not exist');
         }else{
             /*检查密码是否正确*/
             $hashed_password = $user->password;
@@ -90,7 +91,11 @@ class User extends Model
         session()->forget('username');
         session()->forget('id');
         //return redirect('/');
-        return success('success');
+        return success(['msg'=>'success']);
+    }
+
+    public function exist(){
+        return success(['count'=>$this->where('username',rq('username'))->count()]);
     }
 
     public function verify_username_and_password()
@@ -106,7 +111,7 @@ class User extends Model
 
     public function is_logged_in()
     {
-        return session('id')?:false;
+        return is_logged_in();
     }
 
     public function change_password()
@@ -195,7 +200,7 @@ class User extends Model
 
     public function answers(){
         return $this
-            ->belongsToMany('App\User')
+            ->belongsToMany('App\Answer')
             ->withPivot('vote')
             ->withTimestamps();
     }

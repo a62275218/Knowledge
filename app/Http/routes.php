@@ -10,6 +10,7 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+use App\User;
 
 //pagination
 function paginate($page, $limit){
@@ -22,11 +23,11 @@ function error($msg=null)
 {
     return ['status'=>0,'msg'=>$msg];
 }
-function success($data_to_merge= [])
+function success($data_to_add= [])
 {
     $data = ['status'=>1, 'data' => []];
-    if($data_to_merge){
-        $data['data'] = array_merge($data['data'], $data_to_merge);
+    if($data_to_add){
+        $data['data'] = $data_to_add;
         return $data;
     }
 }
@@ -60,8 +61,28 @@ function comment_init()
     return $comment = new App\Comment;
 }
 
+function is_logged_in(){
+    return session('id')?:false;
+}
+
 Route::get('/', function () {
     return view('index');
+});
+
+Route::get('page/home',function(){
+    return view('page.home');
+});
+Route::get('page/login',function(){
+    return view('page.login');
+});
+Route::get('page/question_add',function(){
+    return view('page.question_add');
+});
+Route::get('page/signup',function(){
+    return view('page.signup');
+});
+Route::get('page/user',function(){
+    return view('page.user');
 });
 
 Route::group(['prefix'=>'api/'],function(){
@@ -78,8 +99,15 @@ Route::group(['prefix'=>'api/'],function(){
         return user_init()->logout();
     });
 
+    Route::any('user/exist',function(){
+        return user_init()->exist();
+    });
+
     Route::any('user/read',function(){
         return user_init()->read();
+    });
+    Route::any('user/check_login',function(){
+        return user_init()->is_logged_in();
     });
 
     Route::any('user/change_password',function(){

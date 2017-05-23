@@ -111,4 +111,8 @@ class Question extends Model
             ['status'=>1,'msg'=>'delete successfully']:
             ['status'=>0,'msg'=>'delete failed'];
     }
+    //get the user information of a certain question
+    public function user(){
+        return $this->belongsTo('App\User');
+    }
 }

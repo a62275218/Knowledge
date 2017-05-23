@@ -26,7 +26,7 @@ class Answer extends Model
             ->where(['question_id' => rq('question_id'), 'user_id' => session('id')])
             ->count();
         if ($answered > 0) {
-            return ['status' => 0, 'msg' => 'dulplicated answer'];
+            return ['status' => 0, 'msg' => 'duplicated answer'];
         }
         $this->content = rq('content');
         $this->question_id = rq('question_id');
@@ -55,14 +55,31 @@ class Answer extends Model
             ['status' => 0, 'msg' => 'db insert failed'];
     }
 
+    public function read_by_user($uid){
+        $user = user_init()->find($uid);
+        if(!$user){
+            return error('user not exist');
+        }
+        $r = $this->where('user_id',$uid)
+                ->get()
+                ->keyBy('id');
+        return success($r->toArray());
+    }
     //read answer
     public function read()
     {
-        if (!rq('id') && !rq('question_id')) {
+        if (!rq('id') && !rq('question_id')&& !rq('user_id')) {
             return ['status' => 0, 'msg' => 'id or question id is required'];
         }
+        if(rq('user_id')){
+            $user_id = rq('user_id') === 'self' ? session('id'):rq('user_id');
+            return $this->read_by_user($user_id);
+        }
         if (rq('id')) {
-            $answer = $this->find(rq('id'));
+            $answer = $this
+                ->with('user')
+                ->with('users')
+                ->find(rq('id'));
             if (!$answer) {
                 return ['status' => 0, 'msg' => 'can\'t find answer'];
             } else {
@@ -80,40 +97,52 @@ class Answer extends Model
         return ['status' => 1, 'data' => $answers];
     }
 
-    public function vote(){
-        if(!user_init()->is_logged_in())
-        {
-            return ['status'=>0,'msg'=>'please login'];
+    public function vote()
+    {
+        if (!user_init()->is_logged_in()) {
+            return ['status' => 0, 'msg' => 'please login'];
         }
-        if(!rq('id') || !rq('vote'))
-        {
-            return ['status'=>0,'msg'=>'id and vote required'];
+        if (!rq('id') || !rq('vote')) {
+            return ['status' => 0, 'msg' => 'id and vote required'];
         }
         $answer = $this->find(rq('id'));
-        if(!$answer)
-        {
-            return ['status'=>0,'msg'=>'answer not exist'];
+        if (!$answer) {
+            return ['status' => 0, 'msg' => 'answer not exist'];
         }
-        //1:support 2:against
-        $vote = rq('vote') <=1 ?1:2;
-        //check whether the user has voted for this answer
+        //1:support 2:against 3:clear
+        $vote = rq('vote');
+        if ($vote != 1 && $vote != 2 && $vote != 3) {
+            return ['status' => 0, 'msg' => 'invalid vote'];
+        }
+        //check whether the user has voted for this answer. if voted before,delete it
         $answer
             ->users()
             ->newPivotStatement()
-            ->where('user_id',session('user_id'))
-            ->where('answer_id',rq('id'))
+            ->where('user_id', session('id'))
+            ->where('answer_id', rq('id'))
             ->delete();
+        if ($vote == 3) {
+            return ['status' => 3];
+        }
 
         $answer
             ->users()
-            ->attach(session('user_id'),['vote'=>(int)rq('vote')]);
-        return ['status'=>1,'vote'=>$vote];
+            ->attach(session('id'), ['vote' => $vote]);
+        return ['status' => 1, 'vote' => $vote];
     }
 
-    public function users(){
+    //return all users of the vote for answer
+    public function users()
+    {
         return $this
             ->belongsToMany('App\User')
             ->withPivot('vote')
             ->withTimestamps();
+    }
+
+    //return the user of a certain answer
+    public function user()
+    {
+        return $this->belongsTo('\App\User');
     }
 }

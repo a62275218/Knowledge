@@ -12,11 +12,14 @@ class CommonController extends Controller
         //pass value to two parameters
         list($limit,$skip) = paginate(rq('page'),rq('limit'));
         $questions = question_init()
+            ->with('user')
             ->limit($limit)
             ->skip($skip)
             ->orderBy('created_at','desc')
             ->get();
         $answers = answer_init()
+            ->with('users')
+            ->with('user')
             ->limit($limit)
             ->skip($skip)
             ->orderBy('created_at','desc')
